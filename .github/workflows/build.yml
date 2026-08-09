@@ -1,0 +1,61 @@
+name: Build & Test
+
+on:
+  workflow_dispatch:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+jobs:
+  build:
+    name: ${{ matrix.name }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact_name: "wtf-linux-amd64"
+            binary_path: "build/wtf"
+            name: "Linux"
+          - os: macos-latest
+            artifact_name: "wtf-macos-universal"
+            binary_path: "build/wtf"
+            name: "macOS"
+          - os: windows-latest
+            artifact_name: "wtf-windows-amd64"
+            binary_path: "build/wtf.exe"
+            name: "Windows"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.x'
+
+      - name: Set up Clang
+        if: ${{ matrix.name != 'macOS' }}
+        uses: egor-tensin/setup-clang@v2
+        with:
+          version: 22
+
+      - name: Configure CMake
+        run: cmake -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build Project
+        run: cmake --build build --config Release --parallel
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.binary_path }}
+          if-no-files-found: error
+
+      - name: Run tests
+        run: ctest --test-dir build
