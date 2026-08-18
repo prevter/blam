@@ -14,12 +14,6 @@
     #if defined(__SSE2__)
         #define BLAM_HAS_SSE2
     #endif
-
-    #if defined(__GNUC__) || defined(__clang__)
-        #define BLAM_TARGET(x) __attribute__((target(x)))
-    #else
-        #define BLAM_TARGET(x)
-    #endif
 #elif defined(__aarch64__)
     #define BLAM_PLATFORM_ARM64
 
@@ -33,6 +27,17 @@
         #include <arm_sve.h>
     #endif
 #endif
+
+#if defined(__GNUC__) || defined(__clang__)
+    #define BLAM_TARGET(x) __attribute__((target(x)))
+#else
+    #define BLAM_TARGET(x)
+#endif
+
+#define BLAM_TARGET_SSE2 BLAM_TARGET("sse2")
+#define BLAM_TARGET_AVX2 BLAM_TARGET("avx2")
+#define BLAM_TARGET_NEON BLAM_TARGET("+simd")
+#define BLAM_TARGET_SVE BLAM_TARGET("+sve")
 
 namespace blam::simd {
     struct CPUFeatures {
