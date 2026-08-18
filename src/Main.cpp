@@ -70,9 +70,9 @@ struct Args {
         slic::Option{"--no-gitignore", "-g", &Args::noGitignore, "Disable .gitignore support"},
         slic::Option{"--sort", "-s", &Args::sortingMode, "Sorting mode for output (files, lines, code, comments, blanks)"},
         slic::Option{"--top", "-n", &Args::topN, "Show only the top N languages (default: show all)"},
-        slic::Option{"--per-file", "-p", &Args::collectPerFile, "Collect stats for each file (increases memory usage)"},
+        // slic::Option{"--per-file", "-p", &Args::collectPerFile, "Collect stats for each file (increases memory usage)"}, // TODO: output
         slic::Option{"--output", "-o", &Args::outFile, "Output file (default: stdout)"},
-        slic::Option{"--format", "-f", &Args::outputType, "Output format (text, json, csv)"},
+        slic::Option{"--format", "-f", &Args::outputType, "Output format (text, csv)"},
         slic::Option{"--help", "-h", &Args::help, "Show this help message"},
         slic::Option{"--version", "-v", &Args::version, "Show version information"},
         slic::VarArgs{"Files/directories to scan", &Args::paths}
