@@ -7,7 +7,7 @@
 
 #include "Glob.hpp"
 
-namespace wtf {
+namespace blam {
     struct GitignoreRule {
         glob::Pattern pattern;
         bool negated = false;

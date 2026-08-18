@@ -1,6 +1,6 @@
 #include "Common.hpp"
 
-#ifdef WTF_PLATFORM_X86_64
+#ifdef BLAM_PLATFORM_X86_64
 
 #if defined(_MSC_VER)
 #include <intrin.h>
@@ -17,16 +17,16 @@ static void cpuid(int info[4], int infoType) noexcept {
     );
     #endif
 }
-#elif defined(WTF_PLATFORM_ARM64)
+#elif defined(BLAM_PLATFORM_ARM64)
 // #include <sys/auxv.h>
 // #include <asm/hwcap.h>
 #endif
 
-namespace wtf::simd {
+namespace blam::simd {
     CPUFeatures detectCPUFeatures() noexcept {
         static CPUFeatures features = [] {
             CPUFeatures f;
-        #ifdef WTF_PLATFORM_X86_64
+        #ifdef BLAM_PLATFORM_X86_64
             int info[4];
             cpuid(info, 0);
             int nIds = info[0];
@@ -55,7 +55,7 @@ namespace wtf::simd {
                 cpuid(info, 7);
                 f.avx2 = (info[1] & (1 << 5)) != 0;
             }
-        #elif defined(WTF_PLATFORM_ARM64)
+        #elif defined(BLAM_PLATFORM_ARM64)
             // unsigned long hwcaps = getauxval(AT_HWCAP);
             // unsigned long hwcaps2 = getauxval(AT_HWCAP2);
             // f.neon = (hwcaps & HWCAP_ASIMD) != 0;

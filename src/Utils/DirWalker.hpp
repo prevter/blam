@@ -7,7 +7,7 @@
 #include <condition_variable>
 #include <thread>
 
-namespace wtf {
+namespace blam {
     constexpr size_t QueueCap = 1024;
 
     struct Task {

@@ -12,7 +12,7 @@
 #define PATH_MAX 4096
 #endif
 
-#if defined(WTF_PLATFORM_LINUX)
+#if defined(BLAM_PLATFORM_LINUX)
     #include <dirent.h>
     #include <fcntl.h>
     #include <unistd.h>
@@ -26,7 +26,7 @@
         unsigned char d_type;
         char d_name[];
     };
-#elif defined(WTF_PLATFORM_MACOS)
+#elif defined(BLAM_PLATFORM_MACOS)
     #include <dirent.h>
     #include <fcntl.h>
     #include <unistd.h>
@@ -40,7 +40,7 @@
         attrreference_t nameRef;
         fsobj_type_t objType;
     };
-#elif defined(WTF_PLATFORM_WINDOWS)
+#elif defined(BLAM_PLATFORM_WINDOWS)
     #define WIN32_LEAN_AND_MEAN
     #define NOMINMAX
     #include <windows.h>
@@ -49,14 +49,14 @@
 #endif
 
 static char* dupPath(char const* s) noexcept {
-#ifdef WTF_PLATFORM_WINDOWS
+#ifdef BLAM_PLATFORM_WINDOWS
     return ::_strdup(s);
 #else
     return ::strdup(s);
 #endif
 }
 
-namespace wtf {
+namespace blam {
     Pool::Pool(int numThreads, bool skipHidden, bool useGitignore, bool collectPerFile, FileHandler handler)
         : m_fileHandler(handler), m_numThreads(numThreads),
           m_skipHidden(skipHidden), m_useGitignore(useGitignore),
@@ -95,13 +95,13 @@ namespace wtf {
     }
 
     bool Pool::isDirectory(char const* path) {
-#ifdef WTF_PLATFORM_UNIX
+#ifdef BLAM_PLATFORM_UNIX
         struct stat st;
         if (::stat(path, &st) != 0) {
             return false;
         }
         return S_ISDIR(st.st_mode);
-#elif defined(WTF_PLATFORM_WINDOWS)
+#elif defined(BLAM_PLATFORM_WINDOWS)
         DWORD attrs = ::GetFileAttributesA(path);
         return attrs != INVALID_FILE_ATTRIBUTES && (attrs & FILE_ATTRIBUTE_DIRECTORY);
 #endif
@@ -288,7 +288,7 @@ namespace wtf {
         }
     }
 
-#if defined(WTF_PLATFORM_LINUX)
+#if defined(BLAM_PLATFORM_LINUX)
     void Pool::scanDir(char const* path, uint16_t len, GitignoreNode* gitignore, int threadId) {
         int fd = ::open(path, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
         if (fd < 0) {
@@ -373,7 +373,7 @@ namespace wtf {
         ::close(fd);
         if (node) node->release();
     }
-#elif defined(WTF_PLATFORM_MACOS)
+#elif defined(BLAM_PLATFORM_MACOS)
     void Pool::scanDir(char const* path, uint16_t len, GitignoreNode* gitignore, int threadId) {
         int fd = ::open(path, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
         if (fd < 0) {
@@ -459,7 +459,7 @@ namespace wtf {
         ::close(fd);
         if (node) node->release();
     }
-#elif defined(WTF_PLATFORM_WINDOWS)
+#elif defined(BLAM_PLATFORM_WINDOWS)
     void Pool::scanDir(char const* path, uint16_t len, GitignoreNode* gitignore, int threadId) {
         auto* node = m_useGitignore ? GitignoreNode::makeNode(path, len, gitignore) : nullptr;
 

@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.21)
 project(
-    wtf
-    DESCRIPTION "Wasted Time Finder"
-    VERSION 2.1.0
+    blam
+    DESCRIPTION "Bazillion Lines Analyzed in Milliseconds"
+    VERSION 2.2.0
     LANGUAGES CXX
-    HOMEPAGE_URL "https://github.com/prevter/wtf"
+    HOMEPAGE_URL "https://github.com/prevter/blam"
 )
 
 set(CMAKE_CXX_STANDARD 23)
@@ -13,26 +13,26 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64")
 
-option(WTF_BUILD_TESTS "Build tests" ON)
-option(WTF_ENABLE_SANITIZERS "Enable sanitizers" OFF)
-option(WTF_ENABLE_COVERAGE "Enable code coverage" OFF)
-option(WTF_ENABLE_LTO "Enable Link Time Optimization" ON)
-option(WTF_USE_AVX2 "Build with AVX2 support" OFF) # falls back to auto-detection if disabled
+option(BLAM_BUILD_TESTS "Build tests" ON)
+option(BLAM_ENABLE_SANITIZERS "Enable sanitizers" OFF)
+option(BLAM_ENABLE_COVERAGE "Enable code coverage" OFF)
+option(BLAM_ENABLE_LTO "Enable Link Time Optimization" ON)
+option(BLAM_USE_AVX2 "Build with AVX2 support" OFF) # falls back to auto-detection if disabled
 
-if (WTF_ENABLE_LTO)
+if (BLAM_ENABLE_LTO)
     include(CheckIPOSupported)
     check_ipo_supported(RESULT ipo_supported OUTPUT ipo_error)
     if(ipo_supported)
         set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
     else()
-        message(WARNING "WTF_ENABLE_LTO ignored: compiler does not support link time optimizations")
+        message(WARNING "BLAM_ENABLE_LTO ignored: compiler does not support link time optimizations")
     endif()
 endif()
 
 file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS src/*.cpp)
 if (WIN32)
     # include manifest to enable long + utf-8 paths on windows
-    list(APPEND SOURCES cmake/wtf.manifest)
+    list(APPEND SOURCES cmake/blam.manifest)
 endif()
 
 add_executable(${PROJECT_NAME} ${SOURCES})
@@ -63,14 +63,14 @@ else()
 endif()
 
 if (WIN32)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE WTF_PLATFORM_WINDOWS _CRT_SECURE_NO_WARNINGS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE BLAM_PLATFORM_WINDOWS _CRT_SECURE_NO_WARNINGS)
 elseif (APPLE)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE WTF_PLATFORM_UNIX WTF_PLATFORM_MACOS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE BLAM_PLATFORM_UNIX BLAM_PLATFORM_MACOS)
 elseif (UNIX)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE WTF_PLATFORM_UNIX WTF_PLATFORM_LINUX)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE BLAM_PLATFORM_UNIX BLAM_PLATFORM_LINUX)
 endif()
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE WTF_VERSION="${PROJECT_VERSION}")
+target_compile_definitions(${PROJECT_NAME} PRIVATE BLAM_VERSION="${PROJECT_VERSION}")
 
 include(cmake/CPM.cmake)
 
@@ -79,12 +79,12 @@ CPMAddPackage("gh:prevter/slic@1.0.1")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt slic)
 
-if (WTF_BUILD_TESTS)
+if (BLAM_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
 endif()
 
-if (WTF_ENABLE_SANITIZERS)
+if (BLAM_ENABLE_SANITIZERS)
     if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         target_compile_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
         target_link_options(${PROJECT_NAME} PRIVATE -fsanitize=address,undefined)
@@ -93,7 +93,7 @@ if (WTF_ENABLE_SANITIZERS)
     endif()
 endif()
 
-if (WTF_ENABLE_COVERAGE)
+if (BLAM_ENABLE_COVERAGE)
     if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         target_compile_options(${PROJECT_NAME} PRIVATE --coverage)
         target_link_options(${PROJECT_NAME} PRIVATE --coverage)
@@ -102,12 +102,12 @@ if (WTF_ENABLE_COVERAGE)
     endif()
 endif()
 
-if (WTF_USE_AVX2 AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|i.86)$")
+if (BLAM_USE_AVX2 AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64|i.86)$")
     if (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         target_compile_options(${PROJECT_NAME} PRIVATE -mavx2)
     elseif (MSVC)
         target_compile_options(${PROJECT_NAME} PRIVATE /arch:AVX2)
     endif()
-elseif (WTF_USE_AVX2)
-    message(WARNING "WTF_USE_AVX2 ignored: not an x86_64 target")
+elseif (BLAM_USE_AVX2)
+    message(WARNING "BLAM_USE_AVX2 ignored: not an x86_64 target")
 endif()

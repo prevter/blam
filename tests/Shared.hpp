@@ -6,7 +6,7 @@
 #include <string>
 #include <thread>
 
-namespace wtf::test {
+namespace blam::test {
     namespace fs = std::filesystem;
 
     class TempDir {
@@ -14,7 +14,7 @@ namespace wtf::test {
         TempDir() {
             auto base = fs::temp_directory_path();
             for (int attempt = 0; attempt < 100; ++attempt) {
-                auto candidate = base / ("wtf_test_" + std::to_string(
+                auto candidate = base / ("blam_test_" + std::to_string(
                     std::hash<std::thread::id>{}(std::this_thread::get_id()) ^ (0x9E3779B9u + attempt)
                 ));
                 std::error_code ec;

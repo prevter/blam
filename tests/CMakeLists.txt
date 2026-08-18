@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(wtf_tests)
+project(blam_tests)
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -22,23 +22,19 @@ add_executable(${PROJECT_NAME}
 target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_SOURCE_DIR}/src ${CMAKE_BINARY_DIR})
 add_dependencies(${PROJECT_NAME} generate_langs)
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE WTF_VERSION="test")
+target_compile_definitions(${PROJECT_NAME} PRIVATE BLAM_VERSION="test")
 if (WIN32)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE WTF_PLATFORM_WINDOWS _CRT_SECURE_NO_WARNINGS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE BLAM_PLATFORM_WINDOWS _CRT_SECURE_NO_WARNINGS)
 elseif (APPLE)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE WTF_PLATFORM_UNIX WTF_PLATFORM_MACOS)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE BLAM_PLATFORM_UNIX BLAM_PLATFORM_MACOS)
 elseif (UNIX)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE WTF_PLATFORM_UNIX WTF_PLATFORM_LINUX)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE BLAM_PLATFORM_UNIX BLAM_PLATFORM_LINUX)
 endif()
 
 if (MSVC)
     target_compile_options(${PROJECT_NAME} PRIVATE /W4 /permissive- /Zc:__cplusplus)
 else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra)
-endif()
-
-if (WIN32)
-    target_link_libraries(${PROJECT_NAME} PRIVATE shlwapi)
 endif()
 
 target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt doctest::doctest)

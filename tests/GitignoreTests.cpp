@@ -4,8 +4,8 @@
 #include <Utils/Gitignore.hpp>
 #include "Shared.hpp"
 
-using namespace wtf;
-using namespace wtf::test;
+using namespace blam;
+using namespace blam::test;
 
 static std::string child(std::string_view dir, std::string_view name) {
     return fmt::format("{}/{}", dir, name);

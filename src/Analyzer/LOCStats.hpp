@@ -8,7 +8,7 @@
 
 #include "LanguageSpecs.hpp"
 
-namespace wtf {
+namespace blam {
     struct LOCStats {
         uint64_t fileCount = 0;
         uint64_t fileSize = 0;

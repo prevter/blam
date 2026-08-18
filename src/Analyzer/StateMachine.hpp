@@ -10,12 +10,12 @@
 #define ALWAYS_INLINE
 #endif
 
-namespace wtf {
+namespace blam {
     template <class Language>
     struct Parser {
         using Spec = LanguageSpec<Language>;
 
-        static void parse(FileReader& reader, LOCStats& stats, std::vector<FileStats>* perFileStats, wtf::Language lang) noexcept {
+        static void parse(FileReader& reader, LOCStats& stats, std::vector<FileStats>* perFileStats, blam::Language lang) noexcept {
             enum BaseState : uint8_t {
                 None,
                 InLineComment,
@@ -289,5 +289,5 @@ namespace wtf {
 }
 
 // register all language parsers
-#define WTF_STATE_MACHINE_HPP
+#define BLAM_STATE_MACHINE_HPP
 #include <dispatcher.hpp>

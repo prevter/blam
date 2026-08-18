@@ -2,7 +2,7 @@
 
 #include "../Analyzer/Languages.hpp"
 
-namespace wtf::csv {
+namespace blam::csv {
     void printHeader(FILE* out) noexcept;
     void printLangStat(
         FILE* out,

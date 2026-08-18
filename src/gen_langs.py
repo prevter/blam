@@ -138,7 +138,7 @@ def generate_languages_hpp(data, extensions, filenames, names, unique_specs) -> 
 
     w(f"// This file was automatically generated at {now}")
     w("#pragma once\n")
-    w('#ifndef WTF_LANGUAGE_SPECS_HPP')
+    w('#ifndef BLAM_LANGUAGE_SPECS_HPP')
     w('#error "LanguageSpecs.hpp should be included instead of languages.hpp"')
     w("#endif\n")
 
@@ -148,7 +148,7 @@ def generate_languages_hpp(data, extensions, filenames, names, unique_specs) -> 
     w("#include <string_view>")
     w("#include <utility>\n")
 
-    w("namespace wtf {")
+    w("namespace blam {")
     w("    enum class Language : uint16_t {")
     w("        Unknown,")
 
@@ -231,12 +231,12 @@ def generate_dispatcher_hpp(data) -> str:
 
     w(f"// This file was automatically generated at {now}")
     w("#pragma once\n")
-    w('#ifndef WTF_STATE_MACHINE_HPP')
+    w('#ifndef BLAM_STATE_MACHINE_HPP')
     w('#error "StateMachine.hpp should be included instead of dispatcher.hpp"')
     w("#endif\n")
 
-    w("namespace wtf {")
-    w("    inline void dispatchParser(FileReader& reader, LOCStats& stats, std::vector<wtf::FileStats>* perFileStats, Language lang) noexcept {")
+    w("namespace blam {")
+    w("    inline void dispatchParser(FileReader& reader, LOCStats& stats, std::vector<blam::FileStats>* perFileStats, Language lang) noexcept {")
     w("        switch (lang) {")
     w("            default: case Language::Unknown: std::unreachable(); break;")
 

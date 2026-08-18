@@ -2,7 +2,7 @@
 
 #include <Analyzer/Languages.hpp>
 
-using namespace wtf;
+using namespace blam;
 
 TEST_CASE("detectLanguage: match by extension") {
     CHECK(detectLanguage("main.cpp") == Language::Cpp);

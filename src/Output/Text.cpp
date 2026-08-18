@@ -2,7 +2,7 @@
 
 #include <array>
 
-#ifdef WTF_PLATFORM_WINDOWS
+#ifdef BLAM_PLATFORM_WINDOWS
 #include <io.h>
 #else
 #include <unistd.h>
@@ -82,7 +82,7 @@ struct fmt::formatter<Count> {
     }
 };
 
-namespace wtf::text {
+namespace blam::text {
     bool supportsColorOutput(FILE* out) noexcept {
         #ifdef _WIN32
         static bool res = _isatty(_fileno(out)) != 0;
@@ -106,7 +106,7 @@ namespace wtf::text {
         FILE* out, size_t languageWidth, double analysisTimeMs, double filesPerSec, double linesPerSec,
         double bytesPerSec
     ) noexcept {
-        printStyled(out, title, "wtf v{}", WTF_VERSION);
+        printStyled(out, title, "blam v{}", BLAM_VERSION);
         printStyled(out, dim, " | ");
         printStyled(out, good, "analysis: {}", Time{analysisTimeMs});
         printStyled(out, dim, " | ");

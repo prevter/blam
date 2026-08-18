@@ -4,7 +4,7 @@
 #include <cctype>
 #include "LanguageSpecs.hpp"
 
-namespace wtf {
+namespace blam {
     struct CaseInsensitiveCompare {
         using is_transparent = void;
 

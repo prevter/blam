@@ -1,13 +1,13 @@
 #include "FileReader.hpp"
 
-#ifdef WTF_PLATFORM_UNIX
+#ifdef BLAM_PLATFORM_UNIX
 #include <cerrno>
 #include <unistd.h>
 #include <sys/stat.h>
 
-namespace wtf::detail {
+namespace blam::detail {
     Handle open(char const* path) noexcept {
-    #if defined(WTF_PLATFORM_LINUX) && defined(O_NOATIME)
+    #if defined(BLAM_PLATFORM_LINUX) && defined(O_NOATIME)
         int fd = ::open(path, O_RDONLY | O_CLOEXEC | O_NOATIME);
         if (fd < 0 && errno == EPERM) {
             fd = ::open(path, O_RDONLY | O_CLOEXEC);
@@ -48,10 +48,10 @@ namespace wtf::detail {
     }
 
     void prefetch(Handle h, Offset offset, size_t length) noexcept {
-    #ifdef WTF_PLATFORM_LINUX
+    #ifdef BLAM_PLATFORM_LINUX
         ::readahead(h, offset, length);
     #else
-        #ifdef WTF_PLATFORM_MACOS
+        #ifdef BLAM_PLATFORM_MACOS
         radvisory adv{ .ra_offset = offset, .ra_count = static_cast<int>(length) };
         ::fcntl(h, F_RDADVISE, &adv);
         #else
@@ -62,11 +62,11 @@ namespace wtf::detail {
 
     int lastError() noexcept { return errno; }
 }
-#elif defined(WTF_PLATFORM_WINDOWS)
+#elif defined(BLAM_PLATFORM_WINDOWS)
 #include <algorithm>
 #include <limits>
 
-namespace wtf::detail {
+namespace blam::detail {
     Handle open(char const* path) noexcept {
         return ::CreateFileA(
             path,
@@ -133,7 +133,7 @@ namespace wtf::detail {
 #error "Unsupported platform"
 #endif
 
-namespace wtf {
+namespace blam {
     FileReader::FileReader(FileReader&& o) noexcept
         : m_handle(o.m_handle), m_fileSize(o.m_fileSize),
           m_pageIndex(o.m_pageIndex), m_bytesInBuffer(o.m_bytesInBuffer),

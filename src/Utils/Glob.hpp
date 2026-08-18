@@ -9,7 +9,7 @@
 #include <utility>
 #include <vector>
 
-namespace wtf::glob {
+namespace blam::glob {
     struct CharacterClass {
         std::bitset<256> bits{};
     };

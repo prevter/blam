@@ -6,22 +6,22 @@
 #include <cstring>
 #include <span>
 
-#ifdef WTF_PLATFORM_UNIX
+#ifdef BLAM_PLATFORM_UNIX
 #include <fcntl.h>
 #include <sys/types.h>
 
-#ifdef WTF_PLATFORM_MACOS
+#ifdef BLAM_PLATFORM_MACOS
 #include <sys/fcntl.h>
 #endif
 
-namespace wtf::detail {
+namespace blam::detail {
     using Handle = int;
     using Offset = int64_t;
     using FileSize = int64_t;
 
     static constexpr Handle INVALID = -1;
 }
-#elif defined(WTF_PLATFORM_WINDOWS)
+#elif defined(BLAM_PLATFORM_WINDOWS)
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -32,7 +32,7 @@ using ssize_t = SSIZE_T;
 #define _SSIZE_T_DEFINED
 #endif
 
-namespace wtf::detail {
+namespace blam::detail {
     using Handle = HANDLE;
     using Offset = int64_t;
     using FileSize = int64_t;
@@ -49,14 +49,14 @@ namespace wtf::detail {
 #error "Unsupported platform"
 #endif
 
-namespace wtf::detail {
+namespace blam::detail {
     Handle open(char const* path) noexcept;
     void close(Handle h) noexcept;
     void prefetch(Handle h, Offset offset, size_t length) noexcept;
     int lastError() noexcept;
 }
 
-namespace wtf {
+namespace blam {
     class FileReader {
     public:
         static constexpr size_t PAGE_KILOBYTE = 256;

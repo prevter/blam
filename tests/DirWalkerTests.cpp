@@ -10,8 +10,8 @@
 #include <Utils/FileReader.hpp>
 #include "Shared.hpp"
 
-using namespace wtf;
-using namespace wtf::test;
+using namespace blam;
+using namespace blam::test;
 
 struct Recorder {
     std::mutex mutex;

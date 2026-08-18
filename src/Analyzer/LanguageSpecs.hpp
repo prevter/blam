@@ -3,7 +3,7 @@
 #include <array>
 #include <string_view>
 
-namespace wtf {
+namespace blam {
     struct CommentStyle {
         std::string_view start;
         std::string_view end;
@@ -26,5 +26,5 @@ namespace wtf {
 }
 
 // generated language specs
-#define WTF_LANGUAGE_SPECS_HPP
+#define BLAM_LANGUAGE_SPECS_HPP
 #include <languages.hpp>

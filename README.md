@@ -1,12 +1,12 @@
-# wtf ⁉
+# blam 💥
 
-Blazing fast LOC counter tool
+Bazillion Lines Analyzed in Milliseconds
 
 ---
 
 ## About
 
-wtf is yet another CLOC (Count Lines Of Code) tool that attempts to squeeze as much performance as possible. This
+blam is yet another CLOC (Count Lines Of Code) tool that attempts to squeeze as much performance as possible. This
 project is mostly an experiment to see how far I could go trying to optimize the algorithm.
 
 ## Contents
@@ -39,10 +39,10 @@ project is mostly an experiment to see how far I could go trying to optimize the
 ## Usage
 
 ```
-~> wtf -h
-wtf - Wasted Time Finder
+~> blam -h
+blam - Bazillion Lines Analyzed in Milliseconds
 
-Usage: wtf [OPTIONS] [...]
+Usage: blam [OPTIONS] [...]
 
 Arguments:
   [...]: Files/directories to scan
@@ -63,8 +63,8 @@ Options:
 Example output:
 
 ```
-~> wtf src
-wtf v2.1.0 | analysis: 681.71µs | 30.80K files/s | 4.97M lines/s | 152.00 MiB/s
+~> blam src
+blam v2.1.0 | analysis: 681.71µs | 30.80K files/s | 4.97M lines/s | 152.00 MiB/s
 ───────────────────────────────────────────────────────────────────────────                                                                                                                                                           
  Language        Files        Lines         Code     Comments       Blanks                                                                                                                                                            
 ───────────────────────────────────────────────────────────────────────────                                                                                                                                                           
@@ -79,12 +79,12 @@ Total size: 108,652 bytes (106.11 KiB)
 
 ## Installation
 
-Builds are available on the [releases](https://github.com/prevter/wtf/releases) page for Linux, macOS and Windows. For
+Builds are available on the [releases](https://github.com/prevter/blam/releases) page for Linux, macOS and Windows. For
 building from source refer to the next section.
 
 ## Building
 
-To compile **wtf** you will need:
+To compile **blam** you will need:
 
 - Git (for CPM)
 - CMake 3.21+
@@ -95,7 +95,7 @@ Only clang has been confirmed to work, but GCC should work as well.
 Windows also builds using clang with MSVC toolchain.
 
 ```shell
-git clone https://github.com/prevter/wtf && cd wtf
+git clone https://github.com/prevter/blam && cd blam
 
 cmake -B build -DCMAKE_BUILD_TYPE=Release
 
@@ -104,7 +104,7 @@ cmake --build build
 
 ## Benchmarks
 
-Benchmarks were performed using [hyperfine](https://github.com/sharkdp/hyperfine) comparing `wtf` against popular tools
+Benchmarks were performed using [hyperfine](https://github.com/sharkdp/hyperfine) comparing `blam` against popular tools
 like `scc`, `tokei`, and `polyglot`.
 
 ### Test Environment
@@ -137,7 +137,7 @@ Tested using `hyperfine --warmup 25` to warm the cache for each tool.
 
 | Tool     |   Valkey | Sourcegraph |  CPython |     Linux |
 |:---------|---------:|------------:|---------:|----------:|
-| **wtf**  |     33.7 |    **43.6** | **50.6** | **181.2** |
+| **blam** |     33.7 |    **43.6** | **50.6** | **181.2** |
 | scc      |     31.6 |       114.4 |    133.4 |      2429 |
 | scc -c   |     27.5 |       103.4 |    118.3 |      1734 |
 | tokei    |     31.6 |       147.1 |    121.9 |      1345 |
@@ -150,7 +150,7 @@ each run.
 
 | Tool     |   Valkey | Sourcegraph |   CPython |     Linux |
 |:---------|---------:|------------:|----------:|----------:|
-| **wtf**  | **55.1** |    **90.3** | **104.1** | **711.8** |
+| **blam** | **55.1** |    **90.3** | **104.1** | **711.8** |
 | scc      |     55.7 |       182.3 |     193.2 |      2999 |
 | scc -c   |     56.5 |       188.4 |     174.0 |      2586 |
 | tokei    |     59.9 |       216.7 |     180.3 |      2410 |
@@ -165,7 +165,7 @@ each run.
 
 ```
 --> Running WARM cache benchmark...
-Benchmark 1: wtf valkey
+Benchmark 1: blam valkey
   Time (mean ± σ):      33.7 ms ±   7.8 ms    [User: 21.5 ms, System: 28.7 ms]
   Range (min … max):    17.2 ms …  54.7 ms    93 runs
  
@@ -190,10 +190,10 @@ Summary
     1.49 ± 0.17 times faster than scc -c valkey
     1.71 ± 0.17 times faster than scc valkey
     1.71 ± 0.12 times faster than tokei valkey
-    1.82 ± 0.44 times faster than wtf valkey
+    1.82 ± 0.44 times faster than blam valkey
 
 --> Running COLD cache benchmark...
-Benchmark 1: wtf valkey
+Benchmark 1: blam valkey
   Time (mean ± σ):      55.1 ms ±   5.6 ms    [User: 27.3 ms, System: 81.6 ms]
   Range (min … max):    44.7 ms …  63.9 ms    10 runs
  
@@ -216,7 +216,7 @@ Benchmark 5: polyglot valkey
   Range (min … max):    60.4 ms …  66.2 ms    16 runs
  
 Summary
-  wtf valkey ran
+  blam valkey ran
     1.02 ± 0.12 times faster than scc -c valkey
     1.09 ± 0.12 times faster than tokei valkey
     1.13 ± 0.12 times faster than polyglot valkey
@@ -227,7 +227,7 @@ Summary
 
 ```
 --> Running WARM cache benchmark...
-Benchmark 1: wtf sourcegraph
+Benchmark 1: blam sourcegraph
   Time (mean ± σ):      43.6 ms ±   6.1 ms    [User: 64.6 ms, System: 80.4 ms]
   Range (min … max):    28.7 ms …  59.0 ms    69 runs
  
@@ -250,14 +250,14 @@ Benchmark 5: polyglot sourcegraph
  It might help to use the '--warmup' or '--prepare' options.
  
 Summary
-  wtf sourcegraph ran
+  blam sourcegraph ran
     1.60 ± 0.24 times faster than polyglot sourcegraph
     2.37 ± 0.40 times faster than scc -c sourcegraph
     2.62 ± 0.42 times faster than scc sourcegraph
     3.37 ± 0.48 times faster than tokei sourcegraph
 
 --> Running COLD cache benchmark...
-Benchmark 1: wtf sourcegraph
+Benchmark 1: blam sourcegraph
   Time (mean ± σ):      90.3 ms ±   7.6 ms    [User: 79.9 ms, System: 330.0 ms]
   Range (min … max):    83.3 ms … 104.0 ms    10 runs
  
@@ -282,7 +282,7 @@ Benchmark 5: polyglot sourcegraph
   Range (min … max):   193.9 ms … 206.8 ms    10 runs
  
 Summary
-  wtf sourcegraph ran
+  blam sourcegraph ran
     2.09 ± 0.18 times faster than scc -c sourcegraph
     2.19 ± 0.28 times faster than scc sourcegraph
     2.22 ± 0.19 times faster than polyglot sourcegraph
@@ -293,7 +293,7 @@ Summary
 
 ```
 --> Running WARM cache benchmark...
-Benchmark 1: wtf cpython
+Benchmark 1: blam cpython
   Time (mean ± σ):      50.6 ms ±   7.1 ms    [User: 70.7 ms, System: 63.2 ms]
   Range (min … max):    36.6 ms …  65.5 ms    55 runs
  
@@ -318,14 +318,14 @@ Benchmark 5: polyglot cpython
   Range (min … max):    56.7 ms …  65.9 ms    48 runs
  
 Summary
-  wtf cpython ran
+  blam cpython ran
     1.20 ± 0.17 times faster than polyglot cpython
     2.34 ± 0.49 times faster than scc -c cpython
     2.50 ± 0.37 times faster than tokei cpython
     2.64 ± 0.46 times faster than scc cpython
 
 --> Running COLD cache benchmark...
-Benchmark 1: wtf cpython
+Benchmark 1: blam cpython
   Time (mean ± σ):     104.1 ms ±   8.8 ms    [User: 95.4 ms, System: 290.4 ms]
   Range (min … max):    91.6 ms … 118.0 ms    10 runs
  
@@ -348,7 +348,7 @@ Benchmark 5: polyglot cpython
   Range (min … max):   148.5 ms … 164.4 ms    10 runs
  
 Summary
-  wtf cpython ran
+  blam cpython ran
     1.50 ± 0.14 times faster than polyglot cpython
     1.67 ± 0.19 times faster than scc -c cpython
     1.84 ± 0.26 times faster than tokei cpython
@@ -359,7 +359,7 @@ Summary
 
 ```
 --> Running WARM cache benchmark...
-Benchmark 1: wtf linux
+Benchmark 1: blam linux
   Time (mean ± σ):     181.2 ms ±  12.2 ms    [User: 1172.3 ms, System: 791.6 ms]
   Range (min … max):   163.4 ms … 216.1 ms    17 runs
  
@@ -380,14 +380,14 @@ Benchmark 5: polyglot linux
   Range (min … max):    0.987 s …  1.184 s    10 runs
  
 Summary
-  wtf linux ran
+  blam linux ran
     6.01 ± 0.55 times faster than polyglot linux
     7.42 ± 0.52 times faster than tokei linux
     9.57 ± 1.39 times faster than scc -c linux
    13.40 ± 1.05 times faster than scc linux
 
 --> Running COLD cache benchmark...
-Benchmark 1: wtf linux
+Benchmark 1: blam linux
   Time (mean ± σ):     711.8 ms ±  17.0 ms    [User: 1290.9 ms, System: 4582.8 ms]
   Range (min … max):   691.8 ms … 752.0 ms    10 runs
  
@@ -408,7 +408,7 @@ Benchmark 5: polyglot linux
   Range (min … max):    2.277 s …  2.484 s    10 runs
  
 Summary
-  wtf linux ran
+  blam linux ran
     3.36 ± 0.13 times faster than polyglot linux
     3.39 ± 0.13 times faster than tokei linux
     3.63 ± 0.19 times faster than scc -c linux
@@ -556,7 +556,7 @@ Now this led me to realize that instead of just copy-pasting some existing imple
 efficient at what I needed. Specifically, handle string views (which reduces `strlen` call counts), as well as returning
 some pre-parsed information for each entry to avoid calling the function at all in some cases.
 
-As a result, `wtf::glob::Pattern` was made, which stores all information about the pattern you would need to match the
+As a result, `blam::glob::Pattern` was made, which stores all information about the pattern you would need to match the
 filename, which ended up shaving ~6% of run time on larger repositories (tested on linux kernel) compared to fnmatch.
 
 ### 6. Language definitions codegen

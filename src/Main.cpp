@@ -6,7 +6,7 @@
 #include <slic.hpp>
 #include <fmt/format.h>
 
-#ifdef WTF_PLATFORM_UNIX
+#ifdef BLAM_PLATFORM_UNIX
 #include <sys/resource.h>
 #endif
 
@@ -63,7 +63,7 @@ struct Args {
     bool help = false;
     bool version = false;
 
-    static constexpr std::string_view Description = "wtf - Wasted Time Finder";
+    static constexpr std::string_view Description = "blam - Bazillion Lines Analyzed in Milliseconds";
     static constexpr std::tuple Options = {
         slic::Option{"--threads", "-t", &Args::threads, "Number of threads to use (default: number of CPU cores)"},
         slic::Option{"--hidden", "-i", &Args::showHidden, "Include hidden files and directories"},
@@ -81,22 +81,22 @@ struct Args {
 
 static void HandleFile(
     char const* file,
-    wtf::detail::Handle fd,
-    wtf::Language language,
-    wtf::LOCBucket& bucket,
-    std::vector<wtf::FileStats>* perFileStats
+    blam::detail::Handle fd,
+    blam::Language language,
+    blam::LOCBucket& bucket,
+    std::vector<blam::FileStats>* perFileStats
 ) {
     auto& stat = bucket[language];
     bucket.markHasData(language);
 
     ++stat.fileCount;
 
-    wtf::FileReader reader;
+    blam::FileReader reader;
     if (!reader.open(file, fd)) {
         return;
     }
 
-    wtf::dispatchParser(reader, stat, perFileStats, language);
+    blam::dispatchParser(reader, stat, perFileStats, language);
 }
 
 int main(int argc, char** argv) {
@@ -112,7 +112,7 @@ int main(int argc, char** argv) {
 
     auto const& args = parser.result();
     if (args.version) {
-        fmt::println("wtf version v" WTF_VERSION);
+        fmt::println("blam version v" BLAM_VERSION);
         return 0;
     }
 
@@ -121,7 +121,7 @@ int main(int argc, char** argv) {
         return 0;
     }
 
-#ifdef WTF_PLATFORM_UNIX
+#ifdef BLAM_PLATFORM_UNIX
     // increase the open-file-descriptor limit
     rlimit rl{};
     if (::getrlimit(RLIMIT_NOFILE, &rl) == 0) {
@@ -131,7 +131,7 @@ int main(int argc, char** argv) {
 #endif
 
     {
-        wtf::Pool pool(
+        blam::Pool pool(
             args.threads ? args.threads : std::thread::hardware_concurrency(),
             !args.showHidden,
             !args.noGitignore,
@@ -204,8 +204,8 @@ int main(int argc, char** argv) {
         size_t longestLang = sizeof("Language") - 1;
 
         for (auto const& [lang, stat] : stats) {
-            if (lang == wtf::Language::Unknown) continue;
-            longestLang = std::max(longestLang, wtf::format_as(lang).size());
+            if (lang == blam::Language::Unknown) continue;
+            longestLang = std::max(longestLang, blam::format_as(lang).size());
             totalFiles += stat.fileCount;
             totalLines += stat.totalLines;
             totalBytes += stat.fileSize;
@@ -231,11 +231,11 @@ int main(int argc, char** argv) {
 
         switch (args.outputType) {
             case OutputType::Text: {
-                wtf::text::printHeader(out, longestLang, totalTime, filesPerSec, linesPerSec, bytesPerSec);
+                blam::text::printHeader(out, longestLang, totalTime, filesPerSec, linesPerSec, bytesPerSec);
 
                 for (auto const& [lang, stat] : stats) {
-                    if (lang == wtf::Language::Unknown) continue;
-                    wtf::text::printLangStat(
+                    if (lang == blam::Language::Unknown) continue;
+                    blam::text::printLangStat(
                         out,
                         longestLang,
                         lang,
@@ -247,7 +247,7 @@ int main(int argc, char** argv) {
                     );
                 }
 
-                wtf::text::printFooter(
+                blam::text::printFooter(
                     out,
                     longestLang,
                     totalFiles,
@@ -260,11 +260,11 @@ int main(int argc, char** argv) {
                 break;
             }
             case OutputType::CSV: {
-                wtf::csv::printHeader(out);
+                blam::csv::printHeader(out);
 
                 for (auto const& [lang, stat] : stats) {
-                    if (lang == wtf::Language::Unknown) continue;
-                    wtf::csv::printLangStat(
+                    if (lang == blam::Language::Unknown) continue;
+                    blam::csv::printLangStat(
                         out,
                         lang,
                         stat.fileCount,
@@ -275,7 +275,7 @@ int main(int argc, char** argv) {
                     );
                 }
 
-                wtf::csv::printFooter(
+                blam::csv::printFooter(
                     out,
                     totalFiles,
                     totalLines,

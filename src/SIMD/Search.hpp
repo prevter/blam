@@ -4,7 +4,7 @@
 #include <array>
 #include "Common.hpp"
 
-namespace wtf::simd {
+namespace blam::simd {
     template <std::array SignificantChars>
     constexpr char const* skipNonSignificantLinear(char const* ptr, char const* end) noexcept {
         while (ptr < end) {
@@ -53,9 +53,9 @@ namespace wtf::simd {
         return {ptr, sawNonWs};
     }
 
-#ifdef WTF_PLATFORM_X86_64
+#ifdef BLAM_PLATFORM_X86_64
     template <std::array SignificantChars>
-    WTF_TARGET("avx2") std::array<__m256i, SignificantChars.size() + 1> buildVCharsAVX2() noexcept {
+    BLAM_TARGET("avx2") std::array<__m256i, SignificantChars.size() + 1> buildVCharsAVX2() noexcept {
         constexpr size_t N = SignificantChars.size();
         std::array<__m256i, N + 1> chars;
         chars[0] = _mm256_set1_epi8('\n');
@@ -66,7 +66,7 @@ namespace wtf::simd {
     }
 
     template <std::array SignificantChars>
-    WTF_TARGET("sse2") std::array<__m128i, SignificantChars.size() + 1> buildVCharsSSE2() noexcept {
+    BLAM_TARGET("sse2") std::array<__m128i, SignificantChars.size() + 1> buildVCharsSSE2() noexcept {
         constexpr size_t N = SignificantChars.size();
         std::array<__m128i, N + 1> chars;
         chars[0] = _mm_set1_epi8('\n');
@@ -77,7 +77,7 @@ namespace wtf::simd {
     }
 
     template <std::array SignificantChars>
-    WTF_TARGET("avx2") char const* skipNonSignificantAVX2(char const* ptr, char const* end) noexcept {
+    BLAM_TARGET("avx2") char const* skipNonSignificantAVX2(char const* ptr, char const* end) noexcept {
         constexpr size_t N = SignificantChars.size();
 
         static auto const vchars = buildVCharsAVX2<SignificantChars>();
@@ -101,7 +101,7 @@ namespace wtf::simd {
     }
 
     template <std::array SignificantChars>
-    WTF_TARGET("sse2") char const* skipNonSignificantSSE2(char const* ptr, char const* end) noexcept {
+    BLAM_TARGET("sse2") char const* skipNonSignificantSSE2(char const* ptr, char const* end) noexcept {
         constexpr size_t N = SignificantChars.size();
 
         static auto const vchars = buildVCharsSSE2<SignificantChars>();
@@ -124,7 +124,7 @@ namespace wtf::simd {
         return skipNonSignificantLinear<SignificantChars>(ptr, end);
     }
 
-    WTF_TARGET("avx2") inline bool hasNonWhitespaceAVX2(char const* ptr, char const* end) noexcept {
+    BLAM_TARGET("avx2") inline bool hasNonWhitespaceAVX2(char const* ptr, char const* end) noexcept {
         __m256i space = _mm256_set1_epi8(' ');
         __m256i tab = _mm256_set1_epi8('\t');
         __m256i cr = _mm256_set1_epi8('\r');
@@ -146,7 +146,7 @@ namespace wtf::simd {
         return hasNonWhitespaceLinear(ptr, end);
     }
 
-    WTF_TARGET("sse2") inline bool hasNonWhitespaceSSE2(char const* ptr, char const* end) noexcept {
+    BLAM_TARGET("sse2") inline bool hasNonWhitespaceSSE2(char const* ptr, char const* end) noexcept {
         __m128i space = _mm_set1_epi8(' ');
         __m128i tab = _mm_set1_epi8('\t');
         __m128i cr = _mm_set1_epi8('\r');
@@ -168,7 +168,7 @@ namespace wtf::simd {
         return hasNonWhitespaceLinear(ptr, end);
     }
 
-    WTF_TARGET("avx2") inline char const* findAnyOfThreeAVX2(char const* ptr, char const* end, char a, char b, char c) noexcept {
+    BLAM_TARGET("avx2") inline char const* findAnyOfThreeAVX2(char const* ptr, char const* end, char a, char b, char c) noexcept {
         __m256i va = _mm256_set1_epi8(a);
         __m256i vb = _mm256_set1_epi8(b);
         __m256i vc = _mm256_set1_epi8(c);
@@ -191,7 +191,7 @@ namespace wtf::simd {
         return findAnyOfThreeLinear(ptr, end, a, b, c);
     }
 
-    WTF_TARGET("sse2") inline char const* findAnyOfThreeSSE2(char const* ptr, char const* end, char a, char b, char c) noexcept {
+    BLAM_TARGET("sse2") inline char const* findAnyOfThreeSSE2(char const* ptr, char const* end, char a, char b, char c) noexcept {
         __m128i va = _mm_set1_epi8(a);
         __m128i vb = _mm_set1_epi8(b);
         __m128i vc = _mm_set1_epi8(c);
@@ -215,7 +215,7 @@ namespace wtf::simd {
     }
 
     template <std::array SignificantChars>
-    WTF_TARGET("avx2") SkipClassifiedResult skipNonSignificantClassifiedAVX2(char const* ptr, char const* end) noexcept {
+    BLAM_TARGET("avx2") SkipClassifiedResult skipNonSignificantClassifiedAVX2(char const* ptr, char const* end) noexcept {
         constexpr size_t N = SignificantChars.size();
 
         static auto const vchars = buildVCharsAVX2<SignificantChars>();
@@ -261,7 +261,7 @@ namespace wtf::simd {
     }
 
     template <std::array SignificantChars>
-    WTF_TARGET("sse2") SkipClassifiedResult skipNonSignificantClassifiedSSE2(char const* ptr, char const* end) noexcept {
+    BLAM_TARGET("sse2") SkipClassifiedResult skipNonSignificantClassifiedSSE2(char const* ptr, char const* end) noexcept {
         constexpr size_t N = SignificantChars.size();
 
         static auto const vchars = buildVCharsSSE2<SignificantChars>();
@@ -305,7 +305,7 @@ namespace wtf::simd {
         auto [fp, fNw] = skipNonSignificantClassifiedLinear<SignificantChars>(ptr, end);
         return {fp, static_cast<bool>(sawNonWs | fNw)};
     }
-#elif defined(WTF_PLATFORM_ARM64)
+#elif defined(BLAM_PLATFORM_ARM64)
     template <std::array SignificantChars>
     char const* skipNonSignificantSVE(char const* ptr, char const* end) noexcept {
         return skipNonSignificantLinear<SignificantChars>(ptr, end);
@@ -345,18 +345,18 @@ namespace wtf::simd {
 
     template <std::array SignificantChars>
     char const* skipNonSignificant(char const* ptr, char const* end) noexcept {
-    #ifdef WTF_HAS_AVX2
+    #ifdef BLAM_HAS_AVX2
         return skipNonSignificantAVX2<SignificantChars>(ptr, end);
-    #elif defined(WTF_HAS_SVE)
+    #elif defined(BLAM_HAS_SVE)
         return skipNonSignificantSVE<SignificantChars>(ptr, end);
     #else
         using Fn = char const*(*)(char const*, char const*);
         static Fn const func = [] -> Fn {
             auto features = detectCPUFeatures();
-        #ifdef WTF_PLATFORM_X86_64
+        #ifdef BLAM_PLATFORM_X86_64
             if (features.avx2) return &skipNonSignificantAVX2<SignificantChars>;
             if (features.sse2) return &skipNonSignificantSSE2<SignificantChars>;
-        #elif defined(WTF_PLATFORM_ARM64)
+        #elif defined(BLAM_PLATFORM_ARM64)
             if (features.sve) return &skipNonSignificantSVE<SignificantChars>;
             if (features.neon) return &skipNonSignificantNEON<SignificantChars>;
         #endif
@@ -371,18 +371,18 @@ namespace wtf::simd {
     }
 
     inline bool hasNonWhitespace(char const* ptr, char const* end) noexcept {
-    #ifdef WTF_HAS_AVX2
+    #ifdef BLAM_HAS_AVX2
         return hasNonWhitespaceAVX2(ptr, end);
-    #elif defined(WTF_HAS_SVE)
+    #elif defined(BLAM_HAS_SVE)
         return hasNonWhitespaceSVE(ptr, end);
     #else
         using Fn = bool(*)(char const*, char const*);
         static Fn const func = [] -> Fn {
             auto features = detectCPUFeatures();
-        #ifdef WTF_PLATFORM_X86_64
+        #ifdef BLAM_PLATFORM_X86_64
             if (features.avx2) return &hasNonWhitespaceAVX2;
             if (features.sse2) return &hasNonWhitespaceSSE2;
-        #elif defined(WTF_PLATFORM_ARM64)
+        #elif defined(BLAM_PLATFORM_ARM64)
             if (features.sve) return &hasNonWhitespaceSVE;
             if (features.neon) return &hasNonWhitespaceNEON;
         #endif
@@ -393,18 +393,18 @@ namespace wtf::simd {
     }
 
     inline char const* findAnyOfThree(char const* ptr, char const* end, char a, char b, char c) noexcept {
-    #ifdef WTF_HAS_AVX2
+    #ifdef BLAM_HAS_AVX2
         return findAnyOfThreeAVX2(ptr, end, a, b, c);
-    #elif defined(WTF_HAS_SVE)
+    #elif defined(BLAM_HAS_SVE)
         return findAnyOfThreeSVE(ptr, end, a, b, c);
     #else
         using Fn = char const*(*)(char const*, char const*, char, char, char);
         static Fn const func = [] -> Fn {
             auto features = detectCPUFeatures();
-        #ifdef WTF_PLATFORM_X86_64
+        #ifdef BLAM_PLATFORM_X86_64
             if (features.avx2) return &findAnyOfThreeAVX2;
             if (features.sse2) return &findAnyOfThreeSSE2;
-        #elif defined(WTF_PLATFORM_ARM64)
+        #elif defined(BLAM_PLATFORM_ARM64)
             if (features.sve) return &findAnyOfThreeSVE;
             if (features.neon) return &findAnyOfThreeNEON;
         #endif
@@ -416,18 +416,18 @@ namespace wtf::simd {
 
     template <std::array SignificantChars>
     SkipClassifiedResult skipNonSignificantClassified(char const* ptr, char const* end) noexcept {
-    #ifdef WTF_HAS_AVX2
+    #ifdef BLAM_HAS_AVX2
         return skipNonSignificantClassifiedAVX2<SignificantChars>(ptr, end);
-    #elif defined(WTF_HAS_SVE)
+    #elif defined(BLAM_HAS_SVE)
         return skipNonSignificantClassifiedSVE<SignificantChars>(ptr, end);
     #else
         using Fn = SkipClassifiedResult(*)(char const*, char const*);
         static Fn const func = [] -> Fn {
             auto features = detectCPUFeatures();
-        #ifdef WTF_PLATFORM_X86_64
+        #ifdef BLAM_PLATFORM_X86_64
             if (features.avx2) return &skipNonSignificantClassifiedAVX2<SignificantChars>;
             if (features.sse2) return &skipNonSignificantClassifiedSSE2<SignificantChars>;
-        #elif defined(WTF_PLATFORM_ARM64)
+        #elif defined(BLAM_PLATFORM_ARM64)
             if (features.sve) return &skipNonSignificantClassifiedSVE<SignificantChars>;
             if (features.neon) return &skipNonSignificantClassifiedNEON<SignificantChars>;
         #endif

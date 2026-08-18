@@ -6,7 +6,7 @@
 
 #include "../Analyzer/Languages.hpp"
 
-namespace wtf::text {
+namespace blam::text {
     constexpr auto title = fmt::fg(fmt::color::cyan) | fmt::emphasis::bold;
     constexpr auto accent = fmt::fg(fmt::color::cornflower_blue) | fmt::emphasis::bold;
     constexpr auto good = fmt::fg(fmt::color::light_green) | fmt::emphasis::bold;

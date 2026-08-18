@@ -2,7 +2,7 @@
 
 #include <fmt/format.h>
 
-namespace wtf::csv {
+namespace blam::csv {
     void printHeader(FILE* out) noexcept {
         fmt::print(out, "Language,Files,Total Lines,Code Lines,Comment Lines,Blank Lines\n");
     }

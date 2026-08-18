@@ -14,7 +14,7 @@
 #define SPIN_PAUSE() __asm__ volatile("" ::: "memory")
 #endif
 
-namespace wtf {
+namespace blam {
     template <class T, size_t Cap>
     class ChaseLevQueue {
         static_assert(std::is_trivially_copyable_v<T>, "T must be trivially copyable");

@@ -3,11 +3,11 @@
 #include <climits>
 #include <cstring>
 
-#ifdef WTF_PLATFORM_UNIX
+#ifdef BLAM_PLATFORM_UNIX
 #ifndef PATH_MAX
 #define PATH_MAX 4096
 #endif
-#elif defined(WTF_PLATFORM_WINDOWS)
+#elif defined(BLAM_PLATFORM_WINDOWS)
 #define WIN32_LEAN_AND_MEAN
 #define NOMINMAX
 #include <windows.h>
@@ -19,7 +19,7 @@
 #error "Unsupported platform"
 #endif
 
-namespace wtf {
+namespace blam {
     bool GitignoreRule::matches(std::string_view relative, bool isDir) const noexcept {
         if (directoryOnly && !isDir) return false;
 

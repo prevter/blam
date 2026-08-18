@@ -16,39 +16,112 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
-            artifact_name: "wtf-linux-amd64"
-            binary_path: "build/wtf"
-            name: "Linux"
-          - os: macos-latest
-            artifact_name: "wtf-macos-universal"
-            binary_path: "build/wtf"
-            name: "macOS"
-          - os: windows-latest
-            artifact_name: "wtf-windows-amd64"
-            binary_path: "build/wtf.exe"
-            name: "Windows"
+          - name: "Linux x86_64 (glibc)"
+            os: ubuntu-latest
+            artifact_name: "blam-linux-amd64-glibc"
+            binary_path: "build/blam"
+
+          - name: "Linux x86_64 (glibc / x86_64-v3)"
+            os: ubuntu-latest
+            artifact_name: "blam-linux-amd64-v3-glibc"
+            cmake_flags: "-DCMAKE_CXX_FLAGS=-march=x86-64-v3 -DCMAKE_C_FLAGS=-march=x86-64-v3"
+            binary_path: "build/blam"
+
+          - name: "Linux x86_64 (musl)"
+            os: ubuntu-latest
+            artifact_name: "blam-linux-amd64-musl"
+            binary_path: "build/blam"
+            container: "alpine:latest"
+
+          - name: "Linux x86_64 (musl / x86_64-v3)"
+            os: ubuntu-latest
+            artifact_name: "blam-linux-amd64-v3-musl"
+            cmake_flags: "-DCMAKE_CXX_FLAGS=-march=x86-64-v3 -DCMAKE_C_FLAGS=-march=x86-64-v3"
+            binary_path: "build/blam"
+            container: "alpine:latest"
+
+          - name: "Linux aarch64 (glibc)"
+            os: ubuntu-24.04-arm
+            artifact_name: "blam-linux-aarch64-glibc"
+            binary_path: "build/blam"
+
+          - name: "Linux aarch64 (musl)"
+            os: ubuntu-24.04-arm
+            artifact_name: "blam-linux-aarch64-musl"
+            binary_path: "build/blam"
+            use_docker_step: true
+
+          - name: "macOS Universal"
+            os: macos-latest
+            artifact_name: "blam-macos-universal"
+            binary_path: "build/blam"
+
+          - name: "Windows x86_64"
+            os: windows-latest
+            artifact_name: "blam-windows-amd64"
+            binary_path: "build/blam.exe"
+
+          - name: "Windows x86_64 (v3)"
+            os: windows-latest
+            artifact_name: "blam-windows-amd64-v3"
+            binary_path: "build/blam.exe"
+            cmake_flags: "-DCMAKE_CXX_FLAGS=-march=x86-64-v3 -DCMAKE_C_FLAGS=-march=x86-64-v3"
+
+          - name: "Windows aarch64"
+            os: windows-11-vs2026-arm
+            artifact_name: "blam-windows-aarch64"
+            binary_path: "build/blam.exe"
+
+    container: ${{ matrix.container || '' }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
+      - name: Install Alpine Dependencies (musl build)
+        if: ${{ matrix.container == 'alpine:latest' }}
+        run: |
+          echo "https://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories
+          echo "https://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories
+          apk update
+          apk add --no-cache cmake ninja clang22 build-base python3 git
+          ln -sf /usr/bin/clang-22 /usr/bin/clang
+          ln -sf /usr/bin/clang++-22 /usr/bin/clang++
+
       - name: Set up Python
         uses: actions/setup-python@v7
+        if: ${{ matrix.container != 'alpine:latest' && !matrix.use_docker_step }}
         with:
           python-version: '3.x'
 
       - name: Set up Clang
-        if: ${{ matrix.name != 'macOS' }}
+        if: ${{ matrix.os != 'macos-latest' && matrix.container != 'alpine:latest' && !matrix.use_docker_step }}
         uses: egor-tensin/setup-clang@v2
         with:
           version: 22
 
       - name: Configure CMake
-        run: cmake -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Release
+        if: ${{ !matrix.use_docker_step }}
+        run: cmake -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Release ${{ matrix.cmake_flags }}
 
       - name: Build Project
+        if: ${{ !matrix.use_docker_step }}
         run: cmake --build build --config Release --parallel
+
+      - name: Build inside Alpine Docker (ARM64)
+        if: ${{ matrix.use_docker_step }}
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/workspace -w /workspace alpine:latest sh -c "
+            echo 'https://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && \
+            echo 'https://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories && \
+            apk update && \
+            apk add --no-cache cmake ninja clang22 build-base python3 git && \
+            ln -sf /usr/bin/clang-22 /usr/bin/clang && \
+            ln -sf /usr/bin/clang++-22 /usr/bin/clang++ && \
+            cmake -B build -G Ninja -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_COMPILER=clang -DCMAKE_BUILD_TYPE=Release ${{ matrix.cmake_flags }} && \
+            cmake --build build --config Release --parallel && \
+            ctest --test-dir build
+          "
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v7
@@ -58,4 +131,58 @@ jobs:
           if-no-files-found: error
 
       - name: Run tests
+        if: ${{ !matrix.use_docker_step }}
         run: ctest --test-dir build
+
+  nightly:
+    name: "Publish Nightly Release"
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Get Commit Hash
+        id: ref
+        run: echo "hash=$(git rev-parse --short "$GITHUB_SHA")" >> $GITHUB_OUTPUT
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@v7
+        with:
+          path: artifacts
+
+      - name: Create Versioned Archives
+        run: |
+          HASH="${{ steps.ref.outputs.hash }}"
+          mkdir -p dist
+
+          for dir in artifacts/*; do
+            [ -d "$dir" ] || continue
+            raw_name=$(basename "$dir")
+            target_suffix="${raw_name#blam-}"
+            archive_base="blam-${HASH}-${target_suffix}"
+
+            if [ -f "$dir/blam.exe" ]; then
+              zip -j "dist/${archive_base}.zip" "$dir/blam.exe"
+            elif [ -f "$dir/blam" ]; then
+              tar -czvf "dist/${archive_base}.tar.gz" -C "$dir" blam
+            fi
+          done
+
+      - name: Update Nightly Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          HASH="${{ steps.ref.outputs.hash }}"
+
+          gh release delete nightly --cleanup-tag -y || true
+          gh release create nightly \
+            --title "Nightly Build (${HASH})" \
+            --notes "Automated development build from commit \`${GITHUB_SHA}\`." \
+            --prerelease \
+            --target "${GITHUB_SHA}" \
+            dist/*
