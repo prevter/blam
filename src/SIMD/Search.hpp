@@ -28,7 +28,7 @@ namespace blam::simd {
     constexpr char const* findAnyOfThreeLinear(char const* ptr, char const* end, char a, char b, char c) noexcept {
         for (; ptr < end; ++ptr) {
             char ch = *ptr;
-            if (ch == a | ch == b | ch == c) return ptr;
+            if (ch == a || ch == b || ch == c) return ptr;
         }
         return end;
     }

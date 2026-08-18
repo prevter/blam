@@ -58,7 +58,7 @@ else()
         target_compile_options(${PROJECT_NAME} PRIVATE -Wno-c99-extensions)
     endif()
     if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        target_compile_options(${PROJECT_NAME} PRIVATE -Wno-pedantic -Wno-ignored-attributes)
+        target_compile_options(${PROJECT_NAME} PRIVATE -Wno-pedantic -Wno-ignored-attributes -Wno-interference-size)
     endif()
 endif()
 
