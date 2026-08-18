@@ -24,7 +24,7 @@ jobs:
           - name: "Linux x86_64 (glibc / x86_64-v3)"
             os: ubuntu-latest
             artifact_name: "blam-linux-amd64-v3-glibc"
-            cmake_flags: "-DCMAKE_CXX_FLAGS=-march=x86-64-v3 -DCMAKE_C_FLAGS=-march=x86-64-v3"
+            cmake_flags: "-DCMAKE_CXX_FLAGS=-march=x86-64-v3 -DCMAKE_C_FLAGS=-march=x86-64-v3 -DCMAKE_EXE_LINKER_FLAGS='-march=x86-64-v3 -Wl,-z,x86-64-v3'"
             binary_path: "build/blam"
 
           - name: "Linux x86_64 (musl)"
@@ -36,7 +36,7 @@ jobs:
           - name: "Linux x86_64 (musl / x86_64-v3)"
             os: ubuntu-latest
             artifact_name: "blam-linux-amd64-v3-musl"
-            cmake_flags: "-DCMAKE_CXX_FLAGS=-march=x86-64-v3 -DCMAKE_C_FLAGS=-march=x86-64-v3"
+            cmake_flags: "-DCMAKE_CXX_FLAGS=-march=x86-64-v3 -DCMAKE_C_FLAGS=-march=x86-64-v3 -DCMAKE_EXE_LINKER_FLAGS='-march=x86-64-v3 -Wl,-z,x86-64-v3'"
             binary_path: "build/blam"
             container: "alpine:latest"
 
@@ -65,7 +65,7 @@ jobs:
             os: windows-latest
             artifact_name: "blam-windows-amd64-v3"
             binary_path: "build/blam.exe"
-            cmake_flags: "-DCMAKE_CXX_FLAGS=-march=x86-64-v3 -DCMAKE_C_FLAGS=-march=x86-64-v3"
+            cmake_flags: "-DCMAKE_CXX_FLAGS=-march=x86-64-v3 -DCMAKE_C_FLAGS=-march=x86-64-v3 -DCMAKE_EXE_LINKER_FLAGS=-march=x86-64-v3"
 
           - name: "Windows aarch64"
             os: windows-11-vs2026-arm
