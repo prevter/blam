@@ -79,6 +79,11 @@ CPMAddPackage("gh:prevter/slic@1.0.1")
 
 target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt slic)
 
+if (UNIX AND NOT APPLE)
+    target_link_options(${PROJECT_NAME} PRIVATE -Wl,-z,stack-size=8388608)
+    add_link_options(-Wl,-z,stack-size=8388608)
+endif()
+
 if (BLAM_BUILD_TESTS)
     enable_testing()
     add_subdirectory(tests)
