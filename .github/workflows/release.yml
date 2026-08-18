@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Extract Project Version
-        id: cmake_version
+        id: version
         shell: bash
         run: |
           VERSION=$(python3 -c "
