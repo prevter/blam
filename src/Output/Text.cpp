@@ -3,6 +3,9 @@
 #include <array>
 
 #ifdef BLAM_PLATFORM_WINDOWS
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
 #include <io.h>
 #else
 #include <unistd.h>
@@ -84,8 +87,22 @@ struct fmt::formatter<Count> {
 
 namespace blam::text {
     bool supportsColorOutput(FILE* out) noexcept {
-        #ifdef _WIN32
-        static bool res = _isatty(_fileno(out)) != 0;
+        #ifdef BLAM_PLATFORM_WINDOWS
+        static bool res = [out]() {
+            int fd = _fileno(out);
+            if (!_isatty(fd)) return false;
+
+            auto hOut = reinterpret_cast<HANDLE>(_get_osfhandle(fd));
+            if (hOut == INVALID_HANDLE_VALUE) return false;
+
+            DWORD dwMode = 0;
+            if (!GetConsoleMode(hOut, &dwMode)) return false;
+
+            dwMode |= ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+            if (!SetConsoleMode(hOut, dwMode)) return false;
+
+            return true;
+        }();
         #else
         static bool res = isatty(fileno(out)) != 0;
         #endif
