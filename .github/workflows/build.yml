@@ -4,6 +4,11 @@ on:
   workflow_dispatch:
   push:
     branches: ["**"]
+    paths-ignore:
+      - "*.md"
+      - ".gitignore"
+      - ".gitattributes"
+      - ".github/workflows/release.yml"
   pull_request:
     branches: ["**"]
 
@@ -21,7 +26,7 @@ jobs:
             artifact_name: "blam-linux-amd64-glibc"
             binary_path: "build/blam"
 
-          - name: "Linux x86_64 (glibc / x86_64-v3)"
+          - name: "Linux x86_64-v3 (glibc)"
             os: ubuntu-latest
             artifact_name: "blam-linux-amd64-v3-glibc"
             cmake_flags: "-DCMAKE_CXX_FLAGS=-march=x86-64-v3 -DCMAKE_C_FLAGS=-march=x86-64-v3 -DCMAKE_EXE_LINKER_FLAGS='-march=x86-64-v3 -Wl,-z,x86-64-v3'"
@@ -33,7 +38,7 @@ jobs:
             binary_path: "build/blam"
             container: "alpine:latest"
 
-          - name: "Linux x86_64 (musl / x86_64-v3)"
+          - name: "Linux x86_64-v3 (musl)"
             os: ubuntu-latest
             artifact_name: "blam-linux-amd64-v3-musl"
             cmake_flags: "-DCMAKE_CXX_FLAGS=-march=x86-64-v3 -DCMAKE_C_FLAGS=-march=x86-64-v3 -DCMAKE_EXE_LINKER_FLAGS='-march=x86-64-v3 -Wl,-z,x86-64-v3'"
@@ -61,7 +66,7 @@ jobs:
             artifact_name: "blam-windows-amd64"
             binary_path: "build/blam.exe"
 
-          - name: "Windows x86_64 (v3)"
+          - name: "Windows x86_64-v3"
             os: windows-latest
             artifact_name: "blam-windows-amd64-v3"
             binary_path: "build/blam.exe"
