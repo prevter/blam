@@ -115,6 +115,7 @@ int main(int argc, char** argv) {
     if (args.version) {
         fmt::print("blam version v" BLAM_VERSION " (commit " BLAM_COMMIT_HASH "; ");
         auto caps = blam::simd::detectCPUFeatures();
+        (void) caps;
 
     #ifdef BLAM_PLATFORM_X86_64
         #ifdef BLAM_HAS_AVX2

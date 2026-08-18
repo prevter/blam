@@ -19,8 +19,15 @@
     }
 #elif defined(BLAM_PLATFORM_ARM64)
     #ifdef BLAM_PLATFORM_LINUX
-        #include <asm/hwcap.h>
         #include <sys/auxv.h>
+
+        #ifndef HWCAP_ASIMD
+          #ifdef HWCAP_NEON
+            #define HWCAP_ASIMD HWCAP_NEON
+          #else
+            #define HWCAP_ASIMD (1UL << 1)
+          #endif
+        #endif
     #elif defined(BLAM_PLATFORM_MACOS)
         #include <sys/sysctl.h>
         #include <sys/types.h>
