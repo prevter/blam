@@ -35,6 +35,18 @@ if (WIN32)
     list(APPEND SOURCES cmake/blam.manifest)
 endif()
 
+execute_process(
+    COMMAND git describe --always --dirty
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE BLAM_GIT_COMMIT_HASH
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+)
+
+if (NOT BLAM_GIT_COMMIT_HASH)
+    set(BLAM_GIT_COMMIT_HASH "unknown")
+endif()
+
 add_executable(${PROJECT_NAME} ${SOURCES})
 
 add_custom_target(generate_langs DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/languages.hpp)
@@ -70,7 +82,7 @@ elseif (UNIX)
     target_compile_definitions(${PROJECT_NAME} PRIVATE BLAM_PLATFORM_UNIX BLAM_PLATFORM_LINUX)
 endif()
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE BLAM_VERSION="${PROJECT_VERSION}")
+target_compile_definitions(${PROJECT_NAME} PRIVATE BLAM_VERSION="${PROJECT_VERSION}" BLAM_COMMIT_HASH="${BLAM_GIT_COMMIT_HASH}")
 
 include(cmake/CPM.cmake)
 

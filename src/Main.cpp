@@ -17,6 +17,7 @@
 #include "Analyzer/StateMachine.hpp"
 #include "Output/CSV.hpp"
 #include "Output/Text.hpp"
+#include "SIMD/Common.hpp"
 
 enum class OutputType { Text, JSON, CSV };
 enum class SortingMode { Files, TotalLines, CodeLines, CommentLines, BlankLines };
@@ -112,7 +113,41 @@ int main(int argc, char** argv) {
 
     auto const& args = parser.result();
     if (args.version) {
-        fmt::println("blam version v" BLAM_VERSION);
+        fmt::print("blam version v" BLAM_VERSION " (commit " BLAM_COMMIT_HASH "; ");
+        auto caps = blam::simd::detectCPUFeatures();
+
+    #ifdef BLAM_PLATFORM_X86_64
+        #ifdef BLAM_HAS_AVX2
+        #define BLAM_AVX2_STR "yes"
+        #else
+        #define BLAM_AVX2_STR (caps.avx2 ? "found" : "no")
+        #endif
+
+        #ifdef BLAM_HAS_SSE2
+        #define BLAM_SSE2_STR "yes"
+        #else
+        #define BLAM_SSE2_STR (caps.sse2 ? "found" : "no")
+        #endif
+
+        fmt::println(
+            "x86_64 CPU features: SSE2={}, AVX2={})",
+            BLAM_SSE2_STR,
+            BLAM_AVX2_STR
+        );
+    #elif defined(BLAM_PLATFORM_ARM64)
+        #ifdef BLAM_HAS_NEON
+        #define BLAM_NEON_STR "yes"
+        #else
+        #define BLAM_NEON_STR (caps.neon ? "found" : "no")
+        #endif
+
+        fmt::println(
+            "aarch64 CPU features: NEON={})",
+            BLAM_NEON_STR
+        );
+    #else
+        fmt::println("Unknown CPU)");
+    #endif
         return 0;
     }
 
