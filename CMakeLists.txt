@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.21)
 project(
     blam
     DESCRIPTION "Bazillion Lines Analyzed in Milliseconds"
-    VERSION 2.2.0
+    VERSION 2.2.1
     LANGUAGES CXX
     HOMEPAGE_URL "https://github.com/prevter/blam"
 )
